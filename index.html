@@ -2,8 +2,23 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>道缘 · Dao Yuan</title>
+<meta name="description" content="道家传统文化研习 · 上香打卡、经典研读、每日一签、道长真符鉴赏">
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#8B1A1A">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+
+<!-- iOS add-to-home-screen -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="道缘">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -166,133 +181,318 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ========== PAGE 1: HOME / INCENSE ========== */
+/* ========== PAGE 1: HOME / INCENSE CEREMONY ========== */
 .incense-scene {
   position: relative;
-  background: linear-gradient(180deg, var(--ink) 0%, #2A1F18 40%, #3D2E22 100%);
+  background: linear-gradient(180deg, #0D0907 0%, #1A120D 30%, #2A1F18 60%, #1A120D 100%);
   border-radius: var(--radius);
-  padding: 40px 20px 30px;
+  padding: 0;
   text-align: center;
   margin-bottom: 20px;
   overflow: hidden;
-  min-height: 340px;
+  min-height: 480px;
 }
 
-.incense-scene::before {
-  content: '';
+.incense-canvas {
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 50% 80%, rgba(201,168,76,0.08) 0%, transparent 60%);
+  width: 100%; height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.incense-content {
+  position: relative;
+  z-index: 2;
+  padding: 30px 20px 24px;
 }
 
 .altar-text {
   font-family: 'Noto Serif SC', serif;
-  font-size: 22px; font-weight: 700;
+  font-size: 24px; font-weight: 700;
   color: var(--gold);
-  letter-spacing: 0.15em;
-  margin-bottom: 6px;
-  position: relative;
+  letter-spacing: 0.2em;
+  margin-bottom: 4px;
+  text-shadow: 0 0 20px rgba(201,168,76,0.3);
 }
 
 .altar-date {
   font-size: 12px;
-  color: var(--text-muted);
-  margin-bottom: 30px;
-  position: relative;
+  color: rgba(154,141,127,0.8);
+  margin-bottom: 16px;
 }
 
+/* Prayer input area */
+.prayer-area {
+  margin: 0 auto 20px;
+  max-width: 320px;
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+
+.prayer-input {
+  width: 100%;
+  min-height: 56px;
+  max-height: 100px;
+  background: rgba(201,168,76,0.06);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-family: 'Noto Serif SC', serif;
+  font-size: 14px;
+  color: var(--gold-light);
+  resize: none;
+  text-align: center;
+  line-height: 1.6;
+  transition: all 0.4s;
+}
+
+.prayer-input:focus {
+  outline: none;
+  border-color: rgba(201,168,76,0.5);
+  background: rgba(201,168,76,0.1);
+  box-shadow: 0 0 20px rgba(201,168,76,0.08);
+}
+
+.prayer-input::placeholder {
+  color: rgba(201,168,76,0.35);
+  font-style: italic;
+}
+
+/* Incense holder */
 .incense-holder {
   position: relative;
-  height: 160px;
+  height: 180px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
 .incense-stick {
   width: 3px;
   height: 0;
-  background: linear-gradient(to top, var(--gold-dark), var(--gold));
+  background: linear-gradient(to top, var(--gold-dark), var(--gold), #D4B65A);
   border-radius: 2px 2px 0 0;
-  margin: 0 8px;
+  margin: 0 10px;
   position: relative;
-  transition: height 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: height 1.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.incense-stick.lit { height: 120px; }
+.incense-stick.lit { height: 140px; }
 
 .incense-stick.lit::before {
   content: '';
-  position: absolute; top: -6px; left: 50%;
+  position: absolute; top: -8px; left: 50%;
   transform: translateX(-50%);
-  width: 6px; height: 6px;
-  background: #FF6B35;
+  width: 8px; height: 8px;
+  background: radial-gradient(circle, #FFD700, #FF6B35);
   border-radius: 50%;
-  box-shadow: 0 0 8px #FF6B35, 0 0 16px rgba(255,107,53,0.5);
-  animation: glow 2s ease-in-out infinite alternate;
+  box-shadow: 0 0 6px #FF6B35, 0 0 14px rgba(255,107,53,0.6), 0 0 28px rgba(255,215,0,0.3);
+  animation: emberGlow 1.5s ease-in-out infinite alternate;
 }
 
-.incense-stick.lit::after {
-  content: '';
-  position: absolute; top: -40px; left: 50%;
-  transform: translateX(-50%);
-  width: 2px; height: 30px;
-  background: linear-gradient(to top, rgba(200,200,200,0.4), transparent);
-  animation: smoke 3s ease-in-out infinite;
-}
-
-@keyframes glow {
-  from { box-shadow: 0 0 6px #FF6B35, 0 0 12px rgba(255,107,53,0.4); }
-  to { box-shadow: 0 0 10px #FF8C55, 0 0 20px rgba(255,107,53,0.6); }
-}
-
-@keyframes smoke {
-  0% { opacity: 0.6; transform: translateX(-50%) translateY(0) scaleY(1); }
-  50% { opacity: 0.3; transform: translateX(-40%) translateY(-10px) scaleY(1.3); }
-  100% { opacity: 0; transform: translateX(-60%) translateY(-25px) scaleY(1.6); }
+@keyframes emberGlow {
+  0% { box-shadow: 0 0 4px #FF6B35, 0 0 10px rgba(255,107,53,0.5), 0 0 20px rgba(255,215,0,0.2); transform: translateX(-50%) scale(0.9); }
+  100% { box-shadow: 0 0 8px #FFD700, 0 0 18px rgba(255,107,53,0.7), 0 0 35px rgba(255,215,0,0.4); transform: translateX(-50%) scale(1.1); }
 }
 
 .censer {
-  width: 60px; height: 30px;
-  background: linear-gradient(to bottom, #8B7355, #6B5540);
-  border-radius: 4px 4px 8px 8px;
+  width: 80px; height: 36px;
+  background: linear-gradient(to bottom, #9B8365, #6B5540, #5A4835);
+  border-radius: 6px 6px 12px 12px;
   position: relative;
   margin: 0 auto;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5), inset 0 2px 4px rgba(201,168,76,0.2);
 }
 
 .censer::before {
   content: '';
-  position: absolute; top: -4px; left: -6px; right: -6px;
-  height: 6px;
+  position: absolute; top: -5px; left: -8px; right: -8px;
+  height: 7px;
   background: linear-gradient(to bottom, var(--gold), var(--gold-dark));
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(201,168,76,0.3);
+}
+
+.censer::after {
+  content: '';
+  position: absolute; top: 8px; left: 50%;
+  transform: translateX(-50%);
+  width: 30px; height: 12px;
+  border: 1px solid rgba(201,168,76,0.25);
   border-radius: 3px;
 }
 
+/* Offer button */
 .offer-btn {
   position: relative;
   display: inline-flex; align-items: center; gap: 8px;
-  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-dark));
+  background-size: 200% 200%;
   color: var(--ink);
   border: none;
-  padding: 14px 40px;
+  padding: 16px 48px;
   border-radius: 30px;
   font-family: 'Noto Serif SC', serif;
   font-size: 16px; font-weight: 700;
   cursor: pointer;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   transition: all 0.3s;
-  box-shadow: 0 4px 16px rgba(201,168,76,0.3);
+  box-shadow: 0 4px 20px rgba(201,168,76,0.35), 0 0 40px rgba(201,168,76,0.1);
+  animation: btnShimmer 3s ease-in-out infinite;
+  margin-top: 20px;
 }
 
-.offer-btn:hover { transform: scale(1.03); box-shadow: 0 6px 24px rgba(201,168,76,0.4); }
-.offer-btn:active { transform: scale(0.97); }
-.offer-btn:disabled {
-  background: linear-gradient(135deg, #6B6050, #7A7060);
-  color: var(--text-muted);
-  cursor: not-allowed;
-  box-shadow: none;
+@keyframes btnShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
+
+.offer-btn:hover { transform: scale(1.04); box-shadow: 0 6px 28px rgba(201,168,76,0.5); }
+.offer-btn:active { transform: scale(0.97); }
+.offer-btn.done-state {
+  background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.25));
+  color: var(--gold);
+  box-shadow: none;
+  animation: none;
+  border: 1px solid rgba(201,168,76,0.3);
+  cursor: default;
+}
+
+/* Ceremony overlay */
+.ceremony-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: background 0.8s;
+}
+
+.ceremony-overlay.active {
+  background: rgba(0,0,0,0.85);
+  pointer-events: all;
+}
+
+.ceremony-stage {
+  text-align: center;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ceremony-overlay.active .ceremony-stage {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ceremony-hands {
+  font-size: 80px;
+  animation: handsGlow 2s ease-in-out infinite alternate;
+  margin-bottom: 20px;
+}
+
+@keyframes handsGlow {
+  from { filter: brightness(1) drop-shadow(0 0 10px rgba(201,168,76,0.3)); }
+  to { filter: brightness(1.2) drop-shadow(0 0 25px rgba(201,168,76,0.6)); }
+}
+
+.ceremony-text {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 22px;
+  color: var(--gold-light);
+  letter-spacing: 0.3em;
+  animation: textFade 2s ease-in-out;
+}
+
+@keyframes textFade {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Blessing result */
+.blessing-result {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+  background: rgba(0,0,0,0.9);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 40px 30px;
+}
+
+.blessing-result.show { display: flex; }
+
+.blessing-card {
+  background: linear-gradient(135deg, #1A120D, #2A1F18);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 20px;
+  padding: 40px 30px;
+  max-width: 350px;
+  text-align: center;
+  animation: blessingIn 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 0 60px rgba(201,168,76,0.15), 0 20px 40px rgba(0,0,0,0.5);
+}
+
+@keyframes blessingIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.blessing-lotus { font-size: 48px; margin-bottom: 16px; }
+
+.blessing-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 20px; font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  margin-bottom: 16px;
+}
+
+.blessing-prayer {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 15px;
+  color: rgba(201,168,76,0.7);
+  line-height: 1.8;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: rgba(201,168,76,0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(201,168,76,0.1);
+}
+
+.blessing-merit {
+  font-size: 28px; font-weight: 900;
+  color: var(--gold-light);
+  font-family: 'Noto Serif SC', serif;
+  margin-bottom: 4px;
+}
+
+.blessing-merit-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.blessing-close {
+  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+  color: var(--ink);
+  border: none;
+  padding: 12px 40px;
+  border-radius: 25px;
+  font-family: 'Noto Serif SC', serif;
+  font-size: 15px; font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.1em;
+  transition: all 0.3s;
+}
+
+.blessing-close:active { transform: scale(0.95); }
 
 /* Streak */
 .streak-bar {
@@ -878,6 +1078,202 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 
+/* ========== PAGE: 经典研读 (Classics) ========== */
+.section-header {
+  text-align: center;
+  padding: 16px 0 22px;
+}
+.section-header .sh-symbol { font-size: 52px; display: block; margin-bottom: 10px; }
+.section-header h2 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 23px; font-weight: 700; color: var(--ink);
+  margin-bottom: 6px;
+}
+.section-header p { font-size: 12.5px; color: var(--text-light); max-width: 310px; margin: 0 auto; }
+
+.classic-book {
+  background: linear-gradient(135deg, #2A1F18 0%, #3A2A1E 100%);
+  border-radius: var(--radius);
+  padding: 22px 20px;
+  color: var(--parchment);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(201,168,76,0.35);
+  margin-bottom: 18px;
+  position: relative;
+  overflow: hidden;
+}
+.classic-book::after {
+  content: '☯';
+  position: absolute; right: -10px; bottom: -18px;
+  font-size: 90px; color: rgba(201,168,76,0.08);
+}
+.classic-book .cb-tag {
+  display: inline-block;
+  font-size: 11px; color: var(--ink);
+  background: var(--gold); padding: 3px 10px;
+  border-radius: 20px; font-weight: 700; margin-bottom: 12px;
+}
+.classic-book h3 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 22px; color: var(--gold-light);
+  margin-bottom: 6px; letter-spacing: 1px;
+}
+.classic-book .cb-meta { font-size: 12px; color: rgba(245,236,215,0.6); margin-bottom: 12px; }
+.classic-book .cb-desc { font-size: 13px; line-height: 1.8; color: rgba(245,236,215,0.85); }
+
+.chapter-list { display: flex; flex-direction: column; gap: 12px; }
+.chapter-card {
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 16px 16px 14px;
+  box-shadow: var(--shadow);
+  border-left: 3px solid var(--gold);
+}
+.chapter-card .cc-head {
+  display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px;
+}
+.chapter-card .cc-num {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 13px; color: var(--crimson); font-weight: 700;
+}
+.chapter-card .cc-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 17px; font-weight: 700; color: var(--ink);
+}
+.chapter-card .cc-original {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 14.5px; line-height: 2; color: var(--text);
+  background: var(--parchment-dark);
+  padding: 12px 14px; border-radius: 8px;
+  margin-bottom: 12px;
+  position: relative;
+}
+.chapter-card .cc-original::before {
+  content: '原文'; position: absolute; top: -8px; left: 10px;
+  font-size: 10px; background: var(--crimson); color: #fff;
+  padding: 1px 7px; border-radius: 10px;
+}
+.chapter-card .cc-explain {
+  font-size: 13px; line-height: 1.85; color: var(--text-light);
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.5s ease, margin 0.3s, opacity 0.4s;
+  opacity: 0;
+}
+.chapter-card .cc-explain.open {
+  max-height: 600px; opacity: 1; margin-top: 4px;
+}
+.chapter-card .cc-explain .ce-label {
+  display: inline-block; font-size: 11px; color: var(--gold-dark);
+  font-weight: 700; margin-bottom: 4px;
+}
+.chapter-card .cc-btn {
+  width: 100%; margin-top: 4px;
+  background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-light) 100%);
+  color: var(--gold-light);
+  border: none; border-radius: 8px;
+  padding: 10px; font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.chapter-card .cc-btn:active { transform: scale(0.98); }
+
+.classic-tabs {
+  display: flex; gap: 8px; margin-bottom: 18px;
+  background: var(--parchment-dark); padding: 4px; border-radius: 10px;
+}
+.classic-tabs button {
+  flex: 1; padding: 9px; border: none; background: none;
+  font-size: 13px; font-weight: 600; color: var(--text-light);
+  border-radius: 7px; cursor: pointer; font-family: inherit;
+  transition: all 0.25s;
+}
+.classic-tabs button.active { background: var(--white); color: var(--crimson); box-shadow: var(--shadow); }
+
+/* ========== PAGE: 道长真符 (Talisman) ========== */
+.master-card {
+  background: linear-gradient(135deg, #8B1A1A 0%, #5E1010 100%);
+  border-radius: var(--radius);
+  padding: 20px;
+  color: var(--parchment);
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 18px;
+  display: flex; gap: 16px; align-items: center;
+}
+.master-avatar {
+  width: 64px; height: 64px; flex-shrink: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--gold-light), var(--gold-dark));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+  border: 2px solid var(--gold-light);
+}
+.master-info h3 { font-family:'Noto Serif SC',serif; font-size: 18px; color: var(--gold-light); margin-bottom: 4px; }
+.master-info p { font-size: 12px; line-height: 1.65; color: rgba(245,236,215,0.8); }
+.master-info .placeholder-note { color: var(--gold-light); font-size: 11px; margin-top: 6px; opacity: 0.8; }
+
+.talisman-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  margin-bottom: 18px;
+}
+.talisman-item {
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform 0.25s;
+}
+.talisman-item:active { transform: scale(0.97); }
+.talisman-img {
+  aspect-ratio: 3/4;
+  background:
+    repeating-linear-gradient(45deg, rgba(139,26,26,0.04) 0 8px, transparent 8px 16px),
+    linear-gradient(160deg, #F5ECD7 0%, #E8DCC0 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  position: relative;
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+}
+.talisman-img .fu-glyph {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 46px; color: var(--crimson);
+  text-shadow: 0 2px 8px rgba(139,26,26,0.25);
+  writing-mode: vertical-rl;
+  line-height: 1.05;
+}
+.talisman-img .fu-seal {
+  position: absolute; bottom: 10px; right: 10px;
+  width: 24px; height: 24px; border-radius: 4px;
+  background: var(--crimson); color: #fff;
+  font-size: 11px; display: flex; align-items: center; justify-content: center;
+  font-family: 'Noto Serif SC', serif;
+}
+.talisman-meta { padding: 10px 12px; }
+.talisman-meta .tm-name { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.talisman-meta .tm-use { font-size: 11px; color: var(--text-muted); }
+
+.talisman-placeholder-badge {
+  text-align: center; font-size: 11px; color: var(--text-muted);
+  background: var(--parchment-dark); border: 1px dashed var(--gold-dark);
+  border-radius: 8px; padding: 10px; margin-bottom: 18px;
+}
+
+.compliance-note {
+  font-size: 11px; line-height: 1.7; color: var(--text-muted);
+  text-align: center; padding: 14px 16px;
+  background: rgba(201,168,76,0.06);
+  border: 1px solid rgba(201,168,76,0.18);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+}
+.private-cta {
+  width: 100%; margin-bottom: 18px;
+  background: linear-gradient(135deg, #2A1F18, #3A2A1E);
+  color: var(--gold-light); border: 1px solid rgba(201,168,76,0.4);
+  border-radius: var(--radius-sm); padding: 14px;
+  font-size: 13.5px; font-weight: 600; cursor: pointer; font-family: inherit;
+}
+.private-cta:active { transform: scale(0.99); }
+
 /* Responsive tweak */
 @media (min-width: 431px) {
   .app {
@@ -912,20 +1308,47 @@ body {
 
   <!-- PAGE 1: Home / Incense -->
   <div class="page active" id="pageHome">
-    <!-- Incense Scene -->
-    <div class="incense-scene">
-      <div class="altar-text">诚心上香</div>
-      <div class="altar-date" id="lunarDate">甲辰年 · 腊月初十</div>
-      <div class="incense-holder">
-        <div class="incense-stick" id="stick1"></div>
-        <div class="incense-stick" id="stick2"></div>
-        <div class="incense-stick" id="stick3"></div>
-      </div>
-      <div class="censer"></div>
-      <div style="margin-top: 24px; position: relative;">
-        <button class="offer-btn" id="offerBtn" onclick="offerIncense()">
+    <!-- Incense Ceremony Scene -->
+    <div class="incense-scene" id="incenseScene">
+      <canvas class="incense-canvas" id="incenseCanvas"></canvas>
+      <div class="incense-content">
+        <div class="altar-text">诚心上香</div>
+        <div class="altar-date" id="lunarDate">甲辰年 · 腊月初十</div>
+
+        <div class="prayer-area" id="prayerArea">
+          <textarea class="prayer-input" id="prayerInput" placeholder="写下您的心愿..." maxlength="100" rows="2"></textarea>
+        </div>
+
+        <div class="incense-holder">
+          <div class="incense-stick" id="stick1"></div>
+          <div class="incense-stick" id="stick2"></div>
+          <div class="incense-stick" id="stick3"></div>
+        </div>
+        <div class="censer"></div>
+
+        <button class="offer-btn" id="offerBtn" onclick="startCeremony()">
           🪷 上香祈福
         </button>
+      </div>
+    </div>
+
+    <!-- Ceremony Overlay (合掌 phase) -->
+    <div class="ceremony-overlay" id="ceremonyOverlay">
+      <div class="ceremony-stage">
+        <div class="ceremony-hands" id="ceremonyIcon">🙏</div>
+        <div class="ceremony-text" id="ceremonyText">合掌 · 诚心祈愿</div>
+      </div>
+    </div>
+
+    <!-- Blessing Result -->
+    <div class="blessing-result" id="blessingResult">
+      <div class="blessing-card">
+        <div class="blessing-lotus">🪷</div>
+        <div class="blessing-title">功德圆满</div>
+        <div class="blessing-prayer" id="blessingPrayer"></div>
+        <div class="blessing-merit" id="blessingMerit">+10</div>
+        <div class="blessing-merit-label">福德值</div>
+        <button class="blessing-close" onclick="closeBlessingResult()">善哉 🙏</button>
       </div>
     </div>
 
@@ -952,63 +1375,123 @@ body {
     <!-- Quick Actions -->
     <div class="quick-grid">
       <div class="quick-card" onclick="switchTab(1)">
-        <div class="quick-icon">🔮</div>
-        <div class="quick-title">AI算卦</div>
-        <div class="quick-desc">梅花易数 · 问事吉凶</div>
+        <div class="quick-icon">🎴</div>
+        <div class="quick-title">每日一签</div>
+        <div class="quick-desc">易经智慧 · 文化启示</div>
       </div>
       <div class="quick-card" onclick="switchTab(2)">
-        <div class="quick-icon">📜</div>
-        <div class="quick-title">道语集</div>
-        <div class="quick-desc">每日精选 · 智慧箴言</div>
+        <div class="quick-icon">📖</div>
+        <div class="quick-title">经典研读</div>
+        <div class="quick-desc">太乙金华宗旨 · 白话讲解</div>
       </div>
       <div class="quick-card" onclick="switchTab(3)">
+        <div class="quick-icon">🧧</div>
+        <div class="quick-title">道长真符</div>
+        <div class="quick-desc">朱墨亲书 · 符画鉴赏</div>
+      </div>
+      <div class="quick-card" onclick="switchTab(4)">
         <div class="quick-icon">💬</div>
         <div class="quick-title">问道</div>
         <div class="quick-desc">AI解惑 · 道教知识</div>
       </div>
-      <div class="quick-card" onclick="showToast('🔜 敬请期待')">
-        <div class="quick-icon">🏯</div>
-        <div class="quick-title">法事预约</div>
-        <div class="quick-desc">大师亲办 · 即将上线</div>
-      </div>
     </div>
   </div>
 
-  <!-- PAGE 2: Divination -->
+  <!-- PAGE 2: 每日一签 · 易经智慧 -->
   <div class="page" id="pageDivination">
     <div class="divination-intro">
       <span class="divination-symbol">☯️</span>
-      <h2>梅花易数</h2>
-      <p>心诚则灵。静心默想所问之事，然后起卦求解。</p>
+      <h2>每日一签 · 易经智慧</h2>
+      <p>《易经》是中华传统文化的群经之首。静心写下所念之事，从易理与古人智慧中获得一份观照与启示。</p>
     </div>
 
     <div class="divination-form">
-      <label class="form-label">请输入您想问的事情</label>
-      <textarea class="form-textarea" id="divQuestion" placeholder="例如：近期事业发展如何？这段感情是否有缘？出行是否顺利？"></textarea>
+      <label class="form-label">写下您此刻的心念</label>
+      <textarea class="form-textarea" id="divQuestion" placeholder="例如：近期想专注事业，希望理清方向；想为这段关系找到相处之道……"></textarea>
       <button class="divination-btn" id="divBtn" onclick="startDivination()">
-        🪙 起卦问卜
+        🍃 抽取今日一签
       </button>
     </div>
 
     <div class="casting-animation" id="castingAnim">
-      <div class="casting-coins">🪙</div>
-      <div class="casting-text">掷铜钱起卦中...</div>
+      <div class="casting-coins">☯️</div>
+      <div class="casting-text">静心推演中...</div>
     </div>
 
     <div class="hexagram-result" id="hexResult"></div>
 
     <div class="history-section" id="divHistory"></div>
+
+    <div class="compliance-note" style="margin-top:18px">
+      本栏目以《易经》卦象为载体，从传统文化与人生哲理角度提供启发与自我观照，<b>非命理预测或占卜</b>，请理性看待，愿您从中获得一份内心的从容。
+    </div>
   </div>
 
-  <!-- PAGE 3: Wisdom Quotes -->
-  <div class="page" id="pageWisdom">
-    <div class="wisdom-page-header">
-      <h2>道语集</h2>
-      <p>道家经典智慧，日日新知</p>
+  <!-- PAGE 3: 经典研读 (Classics) -->
+  <div class="page" id="pageClassics">
+    <div class="section-header">
+      <span class="sh-symbol">📖</span>
+      <h2>经典研读</h2>
+      <p>研习道家性命之学，于古籍中照见本心。配白话逐句讲解，初学亦可入门。</p>
     </div>
-    <div class="wisdom-scroll" id="wisdomScroll"></div>
-    <button class="wisdom-refresh-btn" onclick="loadWisdomPage()">
-      🔄 换一批
+
+    <div class="classic-tabs">
+      <button class="active" id="ctabStudy" onclick="switchClassicTab('study')">太乙金华宗旨</button>
+      <button id="ctabWisdom" onclick="switchClassicTab('wisdom')">道语金句</button>
+    </div>
+
+    <!-- Sub-view: 太乙金华宗旨 -->
+    <div id="classicStudy">
+      <div class="classic-book">
+        <span class="cb-tag">内丹经典 · 性命双修</span>
+        <h3>太乙金华宗旨</h3>
+        <div class="cb-meta">楼宇烈 总主编 · 华龄出版社 · 全真道内丹要籍</div>
+        <div class="cb-desc">相传为吕祖（吕洞宾）所传，是道家内丹「回光返照」修持的核心心法。全书以「金华」喻先天一炁之光，教人收摄心神、性命双修。曾由卫礼贤译介西方，名《金花的秘密》，荣格为之作序。</div>
+      </div>
+      <div class="chapter-list" id="chapterList"></div>
+      <div class="compliance-note" style="margin-top:6px">
+        白话讲解为传统文化研习参考，旨在帮助理解经典义理。内丹修持因人而异，如需深入实修，建议依止明师、循序渐进。
+      </div>
+    </div>
+
+    <!-- Sub-view: 道语金句 -->
+    <div id="classicWisdom" style="display:none">
+      <div class="wisdom-scroll" id="wisdomScroll"></div>
+      <button class="wisdom-refresh-btn" onclick="loadWisdomPage()">
+        🔄 换一批
+      </button>
+    </div>
+  </div>
+
+  <!-- PAGE 4: 道长真符 (Talisman) -->
+  <div class="page" id="pageTalisman">
+    <div class="section-header">
+      <span class="sh-symbol">🧧</span>
+      <h2>道长真符 · 符画鉴赏</h2>
+      <p>恭录道长亲笔朱墨真符，以飨同道。一笔一画皆载道心，谨供文化鉴赏与结缘。</p>
+    </div>
+
+    <div class="master-card">
+      <div class="master-avatar">☯</div>
+      <div class="master-info">
+        <h3>本观道长</h3>
+        <p>灵宝派 · 西河法脉 · 持戒清修，精于符箓、科仪与受生填库之法。</p>
+        <p class="placeholder-note">＊道长简介与法脉传承详情待补充（Eva 提供后更新）</p>
+      </div>
+    </div>
+
+    <div class="talisman-grid" id="talismanGrid"></div>
+
+    <div class="talisman-placeholder-badge">
+      以上为道长亲制真符实拍 · 后续将陆续补充更多符画与释义
+    </div>
+
+    <div class="compliance-note">
+      符箓为道教传统文化遗产，本栏目仅作鉴赏与文化传播之用。<br>
+      如对结缘、法事、受生填库等有意，请通过道长私人渠道一对一沟通，App 内不设交易。
+    </div>
+    <button class="private-cta" onclick="showToast('🙏 请联系 Eva 获取道长结缘方式')">
+      🪷 了解结缘与法事（私域沟通）
     </button>
   </div>
 
@@ -1042,14 +1525,18 @@ body {
       <span class="tab-label">首页</span>
     </button>
     <button class="tab-item" onclick="switchTab(1)">
-      <span class="tab-icon">🔮</span>
-      <span class="tab-label">算卦</span>
+      <span class="tab-icon">🎴</span>
+      <span class="tab-label">一签</span>
     </button>
     <button class="tab-item" onclick="switchTab(2)">
-      <span class="tab-icon">📜</span>
-      <span class="tab-label">道语</span>
+      <span class="tab-icon">📖</span>
+      <span class="tab-label">经典</span>
     </button>
     <button class="tab-item" onclick="switchTab(3)">
+      <span class="tab-icon">🧧</span>
+      <span class="tab-label">真符</span>
+    </button>
+    <button class="tab-item" onclick="switchTab(4)">
       <span class="tab-icon">💬</span>
       <span class="tab-label">问道</span>
     </button>
@@ -1100,6 +1587,50 @@ const QA_RESPONSES = {
   "太极八卦的含义是什么？": "太极八卦是道教宇宙观的核心符号体系：\n\n**太极**（☯）\n代表宇宙本源。黑白两条鱼形图案，白为阳、黑为阴。阳中有阴点、阴中有阳点——表示阴阳互根、对立统一。「太极生两仪」——万物由此而生。\n\n**八卦**\n由阴爻（- -）和阳爻（—）组成的三爻符号，共八个：\n\n☰ **乾**（天）——刚健进取\n☷ **坤**（地）——柔顺承载\n☳ **震**（雷）——震动奋起\n☴ **巽**（风）——柔和渗透\n☵ **坎**（水）——险中求通\n☲ **离**（火）——光明文明\n☶ **艮**（山）——止静安定\n☱ **兑**（泽）——喜悦和谐\n\n八卦两两相叠成六十四卦，构成《周易》体系，用以解释天地万物的运行规律。\n\n**现代启示**：八卦本质是一套二进制编码系统——莱布尼茨发明二进制时就受到了八卦的启发。它既是哲学框架，也是古人理解世界的数学模型。",
   "道教的神仙体系是怎样的？": "道教神仙体系极为庞大，层次分明：\n\n**最高神：三清**\n🌟 元始天尊（玉清）——万道之祖\n🌟 灵宝天尊（上清）——道经传授者  \n🌟 道德天尊/太上老君（太清）——即老子化身\n\n**四御（辅佐三清）**\n玉皇大帝——统御万天\n紫微大帝——统御星辰\n勾陈大帝——统御兵戈\n后土皇地祇——统御大地\n\n**重要神灵**\n⚡ 雷部：雷祖大帝、雷公电母\n💧 水部：龙王、水官大帝\n🌙 星辰：太阴星君、太阳星君、北斗七星君\n🏯 地方：城隍、土地公、灶王爷\n💀 冥界：东岳大帝、酆都大帝、十殿阎王\n\n**八仙**\n民间最知名的神仙组合——吕洞宾、铁拐李、张果老、何仙姑、蓝采和、韩湘子、曹国舅、汉钟离。各代表不同社会阶层，象征「人人皆可成仙」。\n\n道教与佛教不同之处在于：**道教相信凡人通过修炼可以成仙**——「我命在我不在天」，这是一种积极的生命哲学。"
 };
+
+// 《太乙金华宗旨》逐章选读 + 白话讲解
+const TAIYI_CHAPTERS = [
+  {
+    num: "第一章",
+    title: "天心",
+    original: "自然曰道。道无名相，一性而已，一元神而已。性命不可见，寄之天光；天光不可见，寄之两目。……天心者，三才同禀之心，丹书所谓玄窍是也。",
+    explain: "开宗明义：「道」本无形无名，落在人身上，便是一点「元神真性」。这点真性看不见，却寄托在「天光」（先天之灵明）之中；天光也看不见，又寄托在我们的「两目」之间。所谓「天心」，就是天、地、人三才所共有的那点灵明本心，丹经里称作「玄窍」。修行的第一步，便是认得这点本心——它不在身外，就在你当下这一念清明里。"
+  },
+  {
+    num: "第二章",
+    title: "元神识神",
+    original: "天地视人如蜉蝣，大道视天地亦泡影。惟元神真性，超元会而上之。……凡人投胎时，元神居方寸，而识神则居下心。",
+    explain: "天地看人，短暂如朝生暮死的蜉蝣；大道看天地，也不过是水上的泡影。唯有人人本具的「元神真性」，能超越时间长河而永存。「元神」是先天本来的觉性，安住在两眉之间的「方寸」；「识神」则是后天的思虑分别心，居于胸中。修行就是要让作主的回归元神，而非被识神（妄念、情绪）牵着走。认清这两者，是入门的关键。"
+  },
+  {
+    num: "第三章",
+    title: "回光守中",
+    original: "回光之名何昉乎？昉之自文始真人也。回光则天地阴阳之气无不凝……回者也，止观也。",
+    explain: "「回光返照」这一法门，源自文始真人（关尹子）。所谓「回光」，就是把平日向外攀缘、追逐声色的心神之光，收回来照见自己的内在。光一回收，天地阴阳之气便随之凝聚。它的实质就是佛家说的「止观」——止息妄念、静观本心。日常练习，不必玄奥：当你发觉心又跑出去了，轻轻把注意力收回到当下、收回到呼吸与眉心之间，这就是一次「回光」。"
+  },
+  {
+    num: "第四章",
+    title: "回光调息",
+    original: "心息相依。息之出入，不可使耳闻。听惟听其无声，一有声即粗浮而不入细。……气定则可入定也。",
+    explain: "讲收心的具体下手处——「调息」。心与呼吸本是相依的：心乱则息粗，息匀则心定。方法是让呼吸细、匀、长，细到连自己的耳朵都听不见声音。一旦听见呼吸声，说明气还粗浮，没有沉下去。把听觉用来「听那无声之声」，心自然就细密、安定下来。气息一定，便能渐入静定。这是最朴实也最有效的安心法，焦虑、失眠时尤其受用。"
+  },
+  {
+    num: "第八章",
+    title: "逍遥诀",
+    original: "玉清留下逍遥诀，四字凝神入气穴。六月俄看白雪飞，三更又见日轮赫。……此中大有逍遥处。",
+    explain: "「逍遥诀」的核心只有四个字：「凝神入气穴」——把散乱的心神凝聚专一，安住于下丹田（气穴）。功夫到时，会有种种内景：盛夏却如见白雪纷飞（清凉），半夜却如见红日高照（光明），这是身心阴阳调和、neither 寒 neither 热的中和之境。它告诉我们：真正的逍遥自在，不在外境的顺遂，而在内心收摄归一、不为境转的那份从容。"
+  }
+];
+
+// 道长真符 · 实拍（Eva 提供）
+const TALISMANS = [
+  { img: "assets/master/web/fu_1.jpg", name: "镇宅纳福真符", use: "装裱双符 · 朱墨亲书", glyph: "符" },
+  { img: "assets/master/web/fu_6.jpg", name: "平安护身符", use: "竖幅长符 · 朱砂点睛", glyph: "安" },
+  { img: "assets/master/web/fu_4.jpg", name: "西河咒枣 · 龙迹颢兴", use: "锦盒结缘 · 西河法脉", glyph: "缘" },
+  { img: "assets/master/web/fu_2.jpg", name: "符箓一组", use: "手绘符箓六道", glyph: "箓" },
+  { img: "assets/master/web/fu_3.jpg", name: "灵宝大法司 · 受生填库牒文", use: "灵宝科仪 · 受生经", glyph: "牒" },
+  { img: "assets/master/web/fu_5.jpg", name: "道在众生 · 道观法堂", use: "本观实景", glyph: "道" }
+];
 
 // ==================== STATE ====================
 let state = {
@@ -1155,7 +1686,7 @@ function getTodayStr() {
 
 // ==================== TAB SWITCHING ====================
 function switchTab(idx) {
-  const pages = ['pageHome', 'pageDivination', 'pageWisdom', 'pageQA'];
+  const pages = ['pageHome', 'pageDivination', 'pageClassics', 'pageTalisman', 'pageQA'];
   const tabs = document.querySelectorAll('.tab-item');
   const chatBar = document.getElementById('chatInputBar');
 
@@ -1164,58 +1695,352 @@ function switchTab(idx) {
     tabs[i].classList.toggle('active', i === idx);
   });
 
-  chatBar.classList.toggle('show', idx === 3);
+  chatBar.classList.toggle('show', idx === 4);
 
-  if (idx === 2) loadWisdomPage();
+  if (idx === 2) { renderChapters(); loadWisdomPage(); }
+  if (idx === 3) renderTalismans();
+
+  // scroll page back to top on switch
+  const active = document.getElementById(pages[idx]);
+  if (active) active.scrollTop = 0;
+  window.scrollTo(0, 0);
 }
 
-// ==================== PAGE 1: INCENSE ====================
-function offerIncense() {
+// ---- 经典 sub-tabs ----
+function switchClassicTab(which) {
+  const study = document.getElementById('classicStudy');
+  const wisdom = document.getElementById('classicWisdom');
+  document.getElementById('ctabStudy').classList.toggle('active', which === 'study');
+  document.getElementById('ctabWisdom').classList.toggle('active', which === 'wisdom');
+  study.style.display = which === 'study' ? 'block' : 'none';
+  wisdom.style.display = which === 'wisdom' ? 'block' : 'none';
+  if (which === 'wisdom') loadWisdomPage();
+}
+
+// ==================== PAGE 1: INCENSE CEREMONY ====================
+
+// --- Web Audio: Temple Bell & Wooden Fish ---
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let audioCtx = null;
+function ensureAudio() { if (!audioCtx) audioCtx = new AudioCtx(); return audioCtx; }
+
+function playTempleBell() {
+  const ctx = ensureAudio();
+  const t = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const osc2 = ctx.createOscillator();
+  const gain = ctx.createGain();
+  const gain2 = ctx.createGain();
+
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(528, t);
+  osc.frequency.exponentialRampToValueAtTime(520, t + 3);
+  gain.gain.setValueAtTime(0, t);
+  gain.gain.linearRampToValueAtTime(0.35, t + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 4);
+
+  osc2.type = 'sine';
+  osc2.frequency.setValueAtTime(1056, t);
+  osc2.frequency.exponentialRampToValueAtTime(1044, t + 2.5);
+  gain2.gain.setValueAtTime(0, t);
+  gain2.gain.linearRampToValueAtTime(0.12, t + 0.01);
+  gain2.gain.exponentialRampToValueAtTime(0.001, t + 2.5);
+
+  osc.connect(gain).connect(ctx.destination);
+  osc2.connect(gain2).connect(ctx.destination);
+  osc.start(t); osc.stop(t + 4);
+  osc2.start(t); osc2.stop(t + 2.5);
+}
+
+function playWoodenFish() {
+  const ctx = ensureAudio();
+  const t = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(800, t);
+  osc.frequency.exponentialRampToValueAtTime(200, t + 0.15);
+  gain.gain.setValueAtTime(0.4, t);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.frequency.value = 400;
+  filter.Q.value = 2;
+
+  osc.connect(filter).connect(gain).connect(ctx.destination);
+  osc.start(t); osc.stop(t + 0.5);
+}
+
+function playBlessingChime() {
+  const ctx = ensureAudio();
+  const t = ctx.currentTime;
+  [396, 528, 639].forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, t + i * 0.3);
+    gain.gain.linearRampToValueAtTime(0.15, t + i * 0.3 + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.3 + 2);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(t + i * 0.3); osc.stop(t + i * 0.3 + 2);
+  });
+}
+
+// --- Canvas Particle System ---
+let particles = [];
+let canvasAnimId = null;
+
+class Particle {
+  constructor(x, y, type) {
+    this.x = x; this.y = y; this.type = type;
+    this.life = 1;
+    if (type === 'smoke') {
+      this.vx = (Math.random() - 0.5) * 0.5;
+      this.vy = -0.3 - Math.random() * 0.6;
+      this.size = 3 + Math.random() * 6;
+      this.decay = 0.003 + Math.random() * 0.004;
+      this.growRate = 0.05 + Math.random() * 0.03;
+      this.drift = Math.random() * Math.PI * 2;
+    } else if (type === 'ember') {
+      this.vx = (Math.random() - 0.5) * 1.5;
+      this.vy = -1 - Math.random() * 2;
+      this.size = 1 + Math.random() * 2;
+      this.decay = 0.01 + Math.random() * 0.015;
+    } else if (type === 'lotus') {
+      this.vx = (Math.random() - 0.5) * 0.8;
+      this.vy = -0.5 - Math.random() * 1;
+      this.size = 4 + Math.random() * 6;
+      this.decay = 0.005 + Math.random() * 0.005;
+      this.rotation = Math.random() * Math.PI * 2;
+      this.rotSpeed = (Math.random() - 0.5) * 0.03;
+    } else if (type === 'golden') {
+      this.vx = (Math.random() - 0.5) * 2;
+      this.vy = -1 - Math.random() * 3;
+      this.size = 1 + Math.random() * 3;
+      this.decay = 0.008 + Math.random() * 0.008;
+    }
+  }
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.life -= this.decay;
+    if (this.type === 'smoke') {
+      this.drift += 0.02;
+      this.vx += Math.sin(this.drift) * 0.02;
+      this.size += this.growRate;
+    }
+    return this.life > 0;
+  }
+  draw(ctx) {
+    ctx.save();
+    ctx.globalAlpha = this.life * (this.type === 'smoke' ? 0.25 : 0.8);
+    if (this.type === 'smoke') {
+      const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+      g.addColorStop(0, 'rgba(200,190,170,0.4)');
+      g.addColorStop(0.6, 'rgba(180,170,150,0.15)');
+      g.addColorStop(1, 'rgba(160,150,140,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+    } else if (this.type === 'ember') {
+      ctx.fillStyle = `rgba(255,${140 + Math.random()*60},${20 + Math.random()*30},${this.life})`;
+      ctx.shadowColor = '#FF6B35'; ctx.shadowBlur = 8;
+      ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+    } else if (this.type === 'lotus') {
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rotation);
+      this.rotation += this.rotSpeed;
+      ctx.fillStyle = `rgba(255,${180+Math.random()*40},${200+Math.random()*55},${this.life * 0.6})`;
+      for (let i = 0; i < 5; i++) {
+        ctx.beginPath();
+        ctx.ellipse(0, -this.size * 0.4, this.size * 0.3, this.size * 0.6, (i * Math.PI * 2) / 5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (this.type === 'golden') {
+      ctx.fillStyle = `rgba(201,168,76,${this.life})`;
+      ctx.shadowColor = '#C9A84C'; ctx.shadowBlur = 6;
+      ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+function initCanvas() {
+  const canvas = document.getElementById('incenseCanvas');
+  const scene = document.getElementById('incenseScene');
+  if (!canvas || !scene) return;
+  canvas.width = scene.offsetWidth * (window.devicePixelRatio || 1);
+  canvas.height = scene.offsetHeight * (window.devicePixelRatio || 1);
+  canvas.style.width = scene.offsetWidth + 'px';
+  canvas.style.height = scene.offsetHeight + 'px';
+}
+
+function startParticles(types) {
+  const canvas = document.getElementById('incenseCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.width; const h = canvas.height;
+
+  const cenX = w / 2;
+  const stickTopY = h * 0.38;
+
+  let frameCount = 0;
+  function animate() {
+    ctx.clearRect(0, 0, w, h);
+
+    frameCount++;
+    if (types.includes('smoke') && frameCount % 3 === 0) {
+      for (let i = -1; i <= 1; i++) {
+        particles.push(new Particle(cenX + i * 20 * dpr, stickTopY, 'smoke'));
+      }
+    }
+    if (types.includes('ember') && frameCount % 8 === 0) {
+      for (let i = -1; i <= 1; i++) {
+        particles.push(new Particle(cenX + i * 20 * dpr + (Math.random()-0.5)*6*dpr, stickTopY, 'ember'));
+      }
+    }
+    if (types.includes('lotus') && frameCount % 25 === 0) {
+      particles.push(new Particle(cenX + (Math.random()-0.5)*w*0.6, h * 0.7, 'lotus'));
+    }
+    if (types.includes('golden') && frameCount % 4 === 0) {
+      particles.push(new Particle(cenX + (Math.random()-0.5)*w*0.4, h * 0.5, 'golden'));
+    }
+
+    particles = particles.filter(p => p.update());
+    particles.forEach(p => p.draw(ctx));
+
+    if (particles.length > 300) particles.splice(0, 50);
+    canvasAnimId = requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+function stopParticles() {
+  if (canvasAnimId) { cancelAnimationFrame(canvasAnimId); canvasAnimId = null; }
+  particles = [];
+  const canvas = document.getElementById('incenseCanvas');
+  if (canvas) { const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); }
+}
+
+// --- Ceremony Flow ---
+function startCeremony() {
   const today = getTodayStr();
   if (state.lastCheckin === today) {
     showToast('今日已上香，明日再来 🙏');
     return;
   }
 
+  if (navigator.vibrate) navigator.vibrate(30);
+
   const btn = document.getElementById('offerBtn');
-  btn.disabled = true;
+  btn.style.display = 'none';
 
-  // Light incense sticks with delay
-  const sticks = [document.getElementById('stick1'), document.getElementById('stick2'), document.getElementById('stick3')];
-  sticks.forEach((s, i) => {
-    setTimeout(() => s.classList.add('lit'), i * 400);
-  });
+  const prayer = document.getElementById('prayerInput').value.trim() || '心诚则灵，万事如意';
 
-  // Update state
+  // Phase 1: 合掌 (palms together) — 2.5s
+  const overlay = document.getElementById('ceremonyOverlay');
+  overlay.classList.add('active');
+  document.getElementById('ceremonyIcon').textContent = '🙏';
+  document.getElementById('ceremonyText').textContent = '合掌 · 诚心祈愿';
+  playWoodenFish();
+  if (navigator.vibrate) navigator.vibrate([30, 100, 30]);
+
   setTimeout(() => {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    // Phase 2: Show prayer text — 2s
+    document.getElementById('ceremonyIcon').textContent = '🪷';
+    document.getElementById('ceremonyText').textContent = `「${prayer.length > 20 ? prayer.slice(0, 20) + '…' : prayer}」`;
+    playWoodenFish();
+    if (navigator.vibrate) navigator.vibrate(20);
+  }, 2500);
 
-    if (state.lastCheckin === yesterdayStr) {
-      state.streak++;
-    } else if (state.lastCheckin !== today) {
-      state.streak = 1;
-    }
+  setTimeout(() => {
+    // Phase 3: Light incense — close overlay, show scene
+    overlay.classList.remove('active');
+    document.getElementById('ceremonyText').textContent = '';
 
-    state.lastCheckin = today;
-    if (!state.checkinDays.includes(today)) {
-      state.checkinDays.push(today);
-    }
+    initCanvas();
+    playTempleBell();
+    if (navigator.vibrate) navigator.vibrate([20, 80, 20, 80, 20]);
 
-    // Merit based on streak
-    let meritGain = 10;
-    if (state.streak >= 7) meritGain = 30;
-    else if (state.streak >= 3) meritGain = 20;
+    // Light sticks sequentially
+    const sticks = ['stick1', 'stick2', 'stick3'];
+    sticks.forEach((id, i) => {
+      setTimeout(() => {
+        document.getElementById(id).classList.add('lit');
+        if (i > 0) playWoodenFish();
+      }, i * 600);
+    });
 
-    state.merit += meritGain;
-    saveState();
+    // Start smoke + ember particles after sticks light
+    setTimeout(() => {
+      startParticles(['smoke', 'ember']);
+    }, 800);
 
-    updateMeritDisplay();
-    updateStreakDisplay();
-    showToast(`+${meritGain} 福德值 · 功德无量 🪷`);
-    btn.textContent = '✅ 今日已上香';
-  }, 1400);
+    // Phase 4: Burst of golden light + lotus petals
+    setTimeout(() => {
+      particles = [];
+      startParticles(['smoke', 'ember', 'lotus', 'golden']);
+      playBlessingChime();
+      if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
+    }, 3000);
+
+    // Phase 5: Show blessing result
+    setTimeout(() => {
+      completeIncense(prayer);
+    }, 5500);
+  }, 4500);
+}
+
+function completeIncense(prayer) {
+  const today = getTodayStr();
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+  if (state.lastCheckin === yesterdayStr) {
+    state.streak++;
+  } else if (state.lastCheckin !== today) {
+    state.streak = 1;
+  }
+
+  state.lastCheckin = today;
+  if (!state.checkinDays.includes(today)) {
+    state.checkinDays.push(today);
+  }
+
+  let meritGain = 10;
+  if (state.streak >= 7) meritGain = 30;
+  else if (state.streak >= 3) meritGain = 20;
+  if (prayer && prayer !== '心诚则灵，万事如意') meritGain += 5;
+
+  state.merit += meritGain;
+  saveState();
+  updateMeritDisplay();
+  updateStreakDisplay();
+
+  // Show blessing card
+  document.getElementById('blessingPrayer').textContent = `「${prayer}」`;
+  document.getElementById('blessingMerit').textContent = `+${meritGain}`;
+  document.getElementById('blessingResult').classList.add('show');
+  playBlessingChime();
+  if (navigator.vibrate) navigator.vibrate([30, 100, 50]);
+
+  // Update button state
+  const btn = document.getElementById('offerBtn');
+  btn.style.display = 'inline-flex';
+  btn.classList.add('done-state');
+  btn.textContent = '✅ 今日已上香';
+  btn.onclick = null;
+}
+
+function closeBlessingResult() {
+  document.getElementById('blessingResult').classList.remove('show');
+  if (navigator.vibrate) navigator.vibrate(15);
+  stopParticles();
+  startParticles(['smoke']);
 }
 
 function updateMeritDisplay() {
@@ -1228,11 +2053,16 @@ function updateStreakDisplay() {
   const today = getTodayStr();
   if (state.lastCheckin === today) {
     const btn = document.getElementById('offerBtn');
-    btn.disabled = true;
+    btn.classList.add('done-state');
     btn.textContent = '✅ 今日已上香';
+    btn.onclick = null;
     ['stick1','stick2','stick3'].forEach(id => {
       document.getElementById(id).classList.add('lit');
     });
+    document.getElementById('prayerArea').style.opacity = '0.5';
+    document.getElementById('prayerInput').disabled = true;
+    initCanvas();
+    startParticles(['smoke']);
   }
 
   // Week dots
@@ -1257,7 +2087,7 @@ function updateStreakDisplay() {
 function startDivination() {
   const q = document.getElementById('divQuestion').value.trim();
   if (!q) {
-    showToast('请先输入所问之事');
+    showToast('请先写下您的心念');
     return;
   }
 
@@ -1273,9 +2103,10 @@ function startDivination() {
       lines.push(Math.random() > 0.5 ? 1 : 0);
     }
 
-    const fortunes = ['大吉', '吉', '中吉', '小吉', '平', '小凶'];
+    const fortunes = ['亨通', '渐吉', '中和', '小成', '平稳', '宜守'];
+    const positive = ['亨通', '渐吉', '中和', '小成'];
     const fortune = fortunes[Math.floor(Math.random() * fortunes.length)];
-    const fortuneColors = { '大吉': '#B8860B', '吉': '#228B22', '中吉': '#2E8B57', '小吉': '#4682B4', '平': '#666', '小凶': '#8B4513' };
+    const fortuneColors = { '亨通': '#B8860B', '渐吉': '#228B22', '中和': '#2E8B57', '小成': '#4682B4', '平稳': '#666', '宜守': '#8B4513' };
 
     const advices = [
       "此卦主动而有成，宜积极进取。但需注意把握时机，不可操之过急。水到渠成，方为上策。",
@@ -1298,17 +2129,17 @@ function startDivination() {
       </div>
       <div class="hexagram-body">
         <div class="hex-section">
-          <div class="hex-section-title">📋 所问之事</div>
+          <div class="hex-section-title">📋 您的心念</div>
           <div class="hex-section-text">${q}</div>
         </div>
         <div class="hex-section">
-          <div class="hex-section-title">🎯 卦象判断 · <span style="color:${fortuneColors[fortune]}">${fortune}</span></div>
+          <div class="hex-section-title">🌿 卦象启示 · <span style="color:${fortuneColors[fortune]}">${fortune}</span></div>
           <div class="hex-verdict"><p>${advice}</p></div>
         </div>
         <div class="hex-section">
-          <div class="hex-section-title">💡 行动建议</div>
+          <div class="hex-section-title">💡 处世建议</div>
           <div class="hex-section-text">
-            ${fortune.includes('吉') ? '此时宜积极行事，但务必保持谦逊之心。善因善果，行善积德自有福报。' : fortune === '平' ? '维持现状为宜，观察局势变化再做决断。静观其变，不动如山。' : '宜暂缓行动，先修内功。退一步海阔天空，待时机成熟再进取不迟。'}
+            ${positive.includes(fortune) ? '此时宜积极行事，但务必保持谦逊之心。善因善果，行善积德自有福报。' : fortune === '平稳' ? '维持现状为宜，观察局势变化再做决断。静观其变，不动如山。' : '宜暂缓行动，先修内功。退一步海阔天空，待时机成熟再进取不迟。'}
           </div>
         </div>
       </div>
@@ -1339,7 +2170,7 @@ function renderDivHistory() {
   const el = document.getElementById('divHistory');
   if (!state.divHistory.length) { el.innerHTML = ''; return; }
   el.innerHTML = `
-    <div class="history-title">历史卦象</div>
+    <div class="history-title">往期一签</div>
     ${state.divHistory.map(h => `
       <div class="history-item">
         <div class="q">${h.question}</div>
@@ -1349,7 +2180,7 @@ function renderDivHistory() {
   `;
 }
 
-// ==================== PAGE 3: WISDOM ====================
+// ==================== PAGE 3: 经典 — WISDOM ====================
 function loadWisdomPage() {
   const el = document.getElementById('wisdomScroll');
   const shuffled = [...WISDOM_QUOTES].sort(() => Math.random() - 0.5).slice(0, 5);
@@ -1362,7 +2193,55 @@ function loadWisdomPage() {
   `).join('');
 }
 
-// ==================== PAGE 4: Q&A ====================
+// ==================== PAGE 3: 经典 — 太乙金华宗旨 ====================
+function renderChapters() {
+  const el = document.getElementById('chapterList');
+  if (el.dataset.rendered) return; // render once
+  el.innerHTML = TAIYI_CHAPTERS.map((c, i) => `
+    <div class="chapter-card">
+      <div class="cc-head">
+        <span class="cc-num">${c.num}</span>
+        <span class="cc-title">${c.title}</span>
+      </div>
+      <div class="cc-original">${c.original}</div>
+      <div class="cc-explain" id="explain${i}">
+        <span class="ce-label">📖 白话讲解</span><br>${c.explain}
+      </div>
+      <button class="cc-btn" id="cbtn${i}" onclick="toggleChapter(${i})">
+        💡 看白话讲解
+      </button>
+    </div>
+  `).join('');
+  el.dataset.rendered = '1';
+}
+
+function toggleChapter(i) {
+  const ex = document.getElementById('explain' + i);
+  const btn = document.getElementById('cbtn' + i);
+  const open = ex.classList.toggle('open');
+  btn.innerHTML = open ? '🔼 收起讲解' : '💡 看白话讲解';
+  if (open) { state.merit += 2; saveState(); updateMeritDisplay(); }
+}
+
+// ==================== PAGE 4: 道长真符 ====================
+function renderTalismans() {
+  const el = document.getElementById('talismanGrid');
+  if (el.dataset.rendered) return;
+  el.innerHTML = TALISMANS.map(t => `
+    <div class="talisman-item" onclick="showToast('🙏 ${t.name}')">
+      <div class="talisman-img" style="background-image:url('${t.img}');background-size:cover;background-position:center">
+        <span class="fu-seal">${t.glyph}</span>
+      </div>
+      <div class="talisman-meta">
+        <div class="tm-name">${t.name}</div>
+        <div class="tm-use">${t.use}</div>
+      </div>
+    </div>
+  `).join('');
+  el.dataset.rendered = '1';
+}
+
+// ==================== PAGE 5: Q&A ====================
 function askQuestion(q) {
   const chatEl = document.getElementById('qaChat');
 
@@ -1415,6 +2294,8 @@ document.addEventListener('DOMContentLoaded', () => {
   loadState();
   document.getElementById('lunarDate').textContent = getLunarDate();
   renderDivHistory();
+  initCanvas();
+  window.addEventListener('resize', initCanvas);
 
   // Random home wisdom
   const w = WISDOM_QUOTES[Math.floor(Math.random() * WISDOM_QUOTES.length)];
@@ -1426,6 +2307,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter') sendChat();
   });
 });
+
+// ==================== PWA: Service Worker ====================
+// Registers only over http(s); silently skipped on file:// (standalone share build).
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {/* offline cache unavailable; app still runs */});
+  });
+}
 </script>
 
 </body>
